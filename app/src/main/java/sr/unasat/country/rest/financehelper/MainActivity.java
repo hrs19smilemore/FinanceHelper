@@ -24,8 +24,8 @@ import static sr.unasat.country.rest.financehelper.database.FinancialDAO.USER_US
 public class MainActivity extends AppCompatActivity {
 
     private FinancialDAO financialDAO;
-    private StringBuilder credentialsUsernames = new StringBuilder();
-    private StringBuilder credentialsPasswords = new StringBuilder();
+    private List credentialsUsernames = new ArrayList<>();
+    private List credentialsPasswords = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,18 +76,16 @@ public class MainActivity extends AppCompatActivity {
         TextView credentialsTextView = (TextView) findViewById(R.id.credentials);
         List<User> users = financialDAO.findAllRecords(USER_TABLE);
         for (User foundUser : users) {
-            credentialsUsernames.append(String.format(foundUser.getUserName()));
-            credentialsUsernames.append("\n\n");
-            credentialsPasswords.append(String.format(foundUser.getPassword()));
-            credentialsPasswords.append("\n\n");
+            credentialsUsernames.add(foundUser.getUserName());
+            credentialsPasswords.add(foundUser.getPassword());
         }
         credentialsTextView.setText(credentialsPasswords.toString());
     }
-    public static boolean containsUsername(StringBuilder credentialsUsernames, String findString) {
-            return credentialsUsernames.indexOf(findString) > -1;
+    public static boolean containsUsername(List credentialsUsernames, String findString) {
+            return credentialsUsernames.contains(findString);
     }
 
-    public static boolean containsPassword(StringBuilder credentialsPasswords, String findString) {
-        return credentialsPasswords.indexOf(findString) > -1;
+    public static boolean containsPassword(List credentialsPasswords, String findString) {
+        return credentialsPasswords.contains(findString);
     }
 }
