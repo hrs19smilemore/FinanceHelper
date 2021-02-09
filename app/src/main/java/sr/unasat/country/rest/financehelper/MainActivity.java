@@ -24,6 +24,8 @@ import static sr.unasat.country.rest.financehelper.database.FinancialDAO.USER_US
 public class MainActivity extends AppCompatActivity {
 
     private FinancialDAO financialDAO;
+    private StringBuilder credentialsUsernames = new StringBuilder();
+    private StringBuilder credentialsPasswords = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
         ContentValues record1 = new ContentValues();
         record1.put(USER_USERNAME, "spiderman");
         record1.put(USER_PASSWORD, "pwd");
-        financialDAO.findOneRecordByUsername("spiderman");
-
-
         records.add(record1);
         //  long result =  financialDAO.insertOneRecord(USER_TABLE, record1);
         //  user = financialDAO.findOneRecordByUsername("spiderman");
@@ -59,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
         EditText username = (EditText) findViewById(R.id.username);
         EditText password = (EditText) findViewById(R.id.password);
 
-
         Button button = (Button) findViewById(R.id.login);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (username.getText().toString().equals("spiderman") && password.getText().toString().equals("pwd")){
+                if (containsUsername(credentialsUsernames, username.getText().toString())  && containsPassword(credentialsPasswords, password.getText().toString())
+                && credentialsUsernames.indexOf(username.getText().toString()) == credentialsPasswords.indexOf(password.getText().toString())){
                     Intent intent = new Intent(MainActivity.this, Dashboard.class);
                     startActivity(intent);
                     Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
@@ -74,12 +73,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        TextView credentialsTextView = (TextView) findViewById(R.id.credentials);
         List<User> users = financialDAO.findAllRecords(USER_TABLE);
-        StringBuilder credentialsText = new StringBuilder();
         for (User foundUser : users) {
-            credentialsText.append(String.format("Username:",foundUser.getUserName(), foundUser.getPassword()));
-            credentialsText.append("\n\n");
+            credentialsUsernames.append(String.format(foundUser.getUserName()));
+            credentialsUsernames.append("\n\n");
+            credentialsPasswords.append(String.format(foundUser.getPassword()));
+            credentialsPasswords.append("\n\n");
         }
-        //credentialsTextView.setText(credentialsText.toString());
+        credentialsTextView.setText(credentialsPasswords.toString());
+    }
+    public static boolean containsUsername(StringBuilder credentialsUsernames, String findString) {
+            return credentialsUsernames.indexOf(findString) > -1;
+    }
+
+    public static boolean containsPassword(StringBuilder credentialsPasswords, String findString) {
+        return credentialsPasswords.indexOf(findString) > -1;
     }
 }
